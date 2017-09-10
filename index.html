@@ -17,10 +17,18 @@
 </head>
 <body>
     <div id="drawing"></div>
-    <select id="shapeOption">
+    Shape: 
+    <select id="shape">
         <option value="rect">Rect</option>
         <option value="ellipse">Ellipse</option>
         <option value=""></option>
+    </select>
+    Color: 
+    <select id="color">
+        <option value="#ff0099">Pink</option>
+        <option value="#f3f313">Yellow</option>
+        <option value="#0dd5fc">Blue</option>
+        <option value="#83f52c">Green</option>
     </select>
     <script>
         const draw = SVG('drawing');
@@ -28,10 +36,11 @@
         let index = 0;
 
         const getDrawObject = () => {
-            const shapeType = document.getElementById('shapeOption').value;
+            const shapeType = document.getElementById('shape').value;
+            const color = document.getElementById('color').value;
             const option = {
-                stroke: '#000',
-                'stroke-width': 1,
+                stroke: color,
+                'stroke-width': 2,
                 'fill-opacity': 0,
             };
             
