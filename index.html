@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RxJS/SVG Playground 2</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@5.0.1/dist/global/Rx.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
+    <script src="svg.draw.min.js"></script>
+    <style>
+        #drawing {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="drawing"></div>
+    <select id="shapeOption">
+        <option value="rect">Rect</option>
+        <option value="ellipse">Ellipse</option>
+        <option value=""></option>
+    </select>
+    <script>
+        const draw = SVG('drawing');
+        const shapes = [];
+        let index = 0;
+
+        const getDrawObject = () => {
+            const shapeType = document.getElementById('shapeOption').value;
+            const option = {
+                stroke: '#000',
+                'stroke-width': 1,
+                'fill-opacity': 0,
+            };
+            
+            switch (shapeType) {
+                case 'rect':
+                    return draw.rect().attr(option);
+                case 'ellipse':
+                    return draw.ellipse().attr(option);
+            }
+            return null;
+        }
+
+
+        draw.on('mousedown', event => {
+            const shape = getDrawObject();
+            shapes[index] = shape;
+            shape.draw(event);
+        });
+        draw.on('mouseup', event => {
+            shapes[index].draw(event);
+            index++;
+        })
+    </script>
+</body>
+</html>
