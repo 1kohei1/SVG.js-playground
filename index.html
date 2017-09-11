@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>RxJS/SVG Playground 2</title>
+    <title>SVG.js Playground 2</title>
     <script src="https://unpkg.com/@reactivex/rxjs@5.0.1/dist/global/Rx.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
     <script src="svg.draw.min.js"></script>
+    <script src="custom-polyline.js"></script>
     <style>
         #drawing {
             border: 1px solid #ccc;
@@ -19,9 +20,8 @@
     <div id="drawing"></div>
     Shape: 
     <select id="shape">
-        <option value="rect">Rect</option>
-        <option value="ellipse">Ellipse</option>
-        <option value=""></option>
+        <option value="ellipse">Circle</option>
+        <option value="mouse paint">Mouse paint</option>
     </select>
     Color: 
     <select id="color">
@@ -34,9 +34,10 @@
         const draw = SVG('drawing');
         const shapes = [];
         let index = 0;
+        let shape;
 
         const getDrawObject = () => {
-            const shapeType = document.getElementById('shape').value;
+            shape = document.getElementById('shape').value;
             const color = document.getElementById('color').value;
             const option = {
                 stroke: color,
@@ -44,9 +45,9 @@
                 'fill-opacity': 0,
             };
             
-            switch (shapeType) {
-                case 'rect':
-                    return draw.rect().attr(option);
+            switch (shape) {
+                case 'mouse paint':
+                    return draw.polyline().attr(option);
                 case 'ellipse':
                     return draw.ellipse().attr(option);
             }
@@ -59,8 +60,17 @@
             shapes[index] = shape;
             shape.draw(event);
         });
+        draw.on('mousemove', event => {
+            if (shape === 'mouse paint' && shapes[index]) {
+                shapes[index].draw('point', event);
+            }
+        })
         draw.on('mouseup', event => {
-            shapes[index].draw(event);
+            if (shape === 'mouse paint') {
+                shapes[index].draw('stop', event);
+            } else {
+                shapes[index].draw(event);
+            }
             index++;
         })
     </script>
