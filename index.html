@@ -11,6 +11,7 @@
     <script src="svg.draw.min.js"></script>
     <script src="custom-polyline.js"></script>
     <script src="svg.draggable.min.js"></script>
+    <link rel="stylesheet" href="svg.select.min.css">
     <script src="svg.select.min.js"></script>
     <script src="svg.resize.min.js"></script>
     <style>
@@ -82,12 +83,25 @@
             return drawObj;
         }
 
-        const clickHandler = (event) => {
-            console.log(event);
+        function clickHandler(event) {
+            unselectAll();
+            this.selectize();
+            this.resize();
+        }
+
+        const unselectAll = () => {
+            _.forEach(shapes, (shape) => {
+                if (shape) {
+                    shape.resize('stop');
+                    shape.selectize(false);
+                }
+            });
         }
 
 
         draw.on('mousedown', event => {
+            unselectAll();
+
             shape = document.getElementById('shape').value;
             color = document.getElementById('color').value;
             if (shape === 'text') {
@@ -110,14 +124,14 @@
             }
         })
         draw.on('mouseup', event => {
-            if (shapes[index] && shape === 'mouse paint') {
-                shapes[index].draw('stop', event);
-            } else if (shapes[index] && shape === 'text') {
-                // Do nothing   
-            } else if (shapes[index]) {
-                shapes[index].draw(event);
+            if (shape !== 'text' && shapes[index]) {
+                if (shape === 'mouse paint') {
+                    shapes[index].draw('stop', event);
+                } else {
+                    shapes[index].draw(event);
+                }
+                index++;
             }
-            index++;
         })
     </script>
 </body>
