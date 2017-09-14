@@ -26,6 +26,7 @@
         <option value="ellipse">Circle</option>
         <option value="mouse paint">Mouse paint</option>
         <option value="text">Text</option>
+        <option value="arrow">Arrow</option>
     </select>
     Color: 
     <select id="color">
@@ -53,6 +54,10 @@
                     return draw.polyline().attr(option);
                 case 'ellipse':
                     return draw.ellipse().attr(option);
+                case 'arrow':
+                    return draw.line().attr(option).marker('end', 8, 8, (add) => {
+                        add.path('M0,0 L0,8 L8,4 L0,0').fill(color);
+                    });
             }
             return null;
         }
