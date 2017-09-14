@@ -39,9 +39,13 @@
         <option value="#0dd5fc">Blue</option>
         <option value="#83f52c">Green</option>
     </select>
+    <button id="delete">
+        Delete
+    </button>
     <script>
         const draw = SVG('drawing');
         const shapes = [];
+        let selectedIndex = null;
         let index = 0;
         let shape;
         let color;
@@ -85,11 +89,13 @@
 
         function clickHandler(event) {
             unselectAll();
+            selectedIndex = _.findIndex(shapes, this);
             this.selectize();
             this.resize();
         }
 
         const unselectAll = () => {
+            selectedIndex = null;
             _.forEach(shapes, (shape) => {
                 if (shape) {
                     shape.resize('stop');
@@ -98,8 +104,17 @@
             });
         }
 
+        document.getElementById('delete').addEventListener('click', function() {
+            if (selectedIndex >= 0) {
+                shapes[selectedIndex].resize('stop');
+                shapes[selectedIndex].selectize(false);
+                shapes[selectedIndex].node.style.display = 'none';
+                selectedIndex = null;
+            }
+        })
 
-        draw.on('mousedown', event => {
+
+        draw.on('mousedown', function(event) {
             unselectAll();
 
             shape = document.getElementById('shape').value;
