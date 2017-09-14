@@ -13,15 +13,19 @@
     <style>
         #drawing {
             border: 1px solid #ccc;
+            position: relative;
         }
     </style>
 </head>
 <body>
-    <div id="drawing"></div>
+    <div id="drawing-wrapper">
+        <div id="drawing"></div>    
+    </div>
     Shape: 
     <select id="shape">
         <option value="ellipse">Circle</option>
         <option value="mouse paint">Mouse paint</option>
+        <option value="text">Text</option>
     </select>
     Color: 
     <select id="color">
@@ -35,10 +39,9 @@
         const shapes = [];
         let index = 0;
         let shape;
+        let color;
 
         const getDrawObject = () => {
-            shape = document.getElementById('shape').value;
-            const color = document.getElementById('color').value;
             const option = {
                 stroke: color,
                 'stroke-width': 2,
@@ -56,9 +59,21 @@
 
 
         draw.on('mousedown', event => {
-            const shape = getDrawObject();
-            shapes[index] = shape;
-            shape.draw(event);
+            shape = document.getElementById('shape').value;
+            color = document.getElementById('color').value;
+            if (shape === 'text') {
+                // Think later how to save these objects to the database and what infomration I need to redraw them back
+                const textarea = document.createElement('textarea');
+                textarea.style.position = 'absolute';
+                textarea.style.left = `${event.x}px`;
+                textarea.style.top = `${event.y}px`;
+                textarea.style.color = color;
+                document.getElementById('drawing-wrapper').appendChild(textarea);
+            } else {
+                const obj = getDrawObject();
+                shapes[index] = obj;
+                obj.draw(event);
+            }
         });
         draw.on('mousemove', event => {
             if (shape === 'mouse paint' && shapes[index]) {
@@ -68,6 +83,8 @@
         draw.on('mouseup', event => {
             if (shape === 'mouse paint') {
                 shapes[index].draw('stop', event);
+            } else if (shape === 'text') {
+                // Do nothing   
             } else {
                 shapes[index].draw(event);
             }
